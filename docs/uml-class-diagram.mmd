@@ -1,0 +1,310 @@
+---
+title: Hospital Patient Management System - Class Diagram
+---
+classDiagram
+    direction TB
+
+    namespace Models {
+        class Patient {
+            +int Id
+            +string Name
+            +int Age
+            +TriageLevel TriageLevel
+            +PatientStatus Status
+            +MedicalHistory History
+            +PatientAccount Account
+            +ToString() string
+        }
+
+        class MedicalRecord {
+            +DateTime Date
+            +string Diagnosis
+            +string Prescription
+            +ToString() string
+        }
+
+        class PatientAccount {
+            -Patient _patient
+            -List~Payment~ _payments
+            +decimal Balance
+            +decimal TotalCharged
+            +decimal TotalPaid
+            +IReadOnlyList~Payment~ Payments
+            +Charge(decimal amount) void
+            +Pay(decimal amount, PaymentMethod method) Payment
+            +ToStatement() string
+        }
+
+        class Payment {
+            +string ReceiptNumber
+            +int PatientId
+            +string PatientName
+            +decimal Amount
+            +PaymentMethod Method
+            +decimal BalanceBefore
+            +decimal BalanceAfter
+            +DateTime PaidAt
+            +ToReceipt() string
+            +ToString() string
+        }
+
+        class PaymentMethod {
+            <<enumeration>>
+            Cash
+            Card
+            BankTransfer
+        }
+
+        class Appointment {
+            +int MaxAdvanceDays$
+            +TimeSpan OpensAt$
+            +TimeSpan ClosesAt$
+            +string DoctorName
+            +int PatientId
+            +DateTime ScheduledAt
+            +string Reason
+            -ValidateScheduledAt(DateTime scheduledAt)$ void
+            +ToString() string
+        }
+
+        class TriageLevel {
+            <<enumeration>>
+            Critical
+            Urgent
+            Standard
+        }
+
+        class PatientStatus {
+            <<enumeration>>
+            Registered
+            Waiting
+            InExamination
+            Treated
+            Discharged
+        }
+    }
+
+    namespace DataStructures {
+        class TriageQueue {
+            -TriageNode _head
+            +int Count
+            +bool IsEmpty
+            +Enqueue(Patient patient) void
+            +Dequeue() Patient
+            +Peek() Patient
+            +Snapshot() IReadOnlyList~Patient~
+        }
+
+        class TriageNode {
+            <<private nested>>
+            +Patient Patient
+            +TriageNode Next
+        }
+
+        class MedicalHistory {
+            -HistoryNode _head
+            -HistoryNode _tail
+            +int Count
+            +AddRecord(MedicalRecord record) void
+            +GetIterator() MedicalHistoryIterator
+        }
+
+        class HistoryNode {
+            <<private nested>>
+            +MedicalRecord Record
+            +HistoryNode Next
+        }
+
+        class MedicalHistoryIterator {
+            <<Iterator>>
+            -HistoryNode _head
+            -HistoryNode _current
+            -bool _exhausted
+            +MedicalRecord Current
+            +MoveNext() bool
+            +Reset() void
+        }
+    }
+
+    namespace Services {
+        class HospitalSystem {
+            <<Singleton>>
+            -HospitalSystem _instance$
+            +HospitalSystem Instance$
+            +PatientRegistry Registry
+            +TriageQueue Triage
+            +AppointmentService Appointments
+            +PatientStatusNotifier Notifier
+            +IBillingStrategy BillingStrategy
+            -HospitalSystem()
+            +AdmitPatient(int id, string name, int age, TriageLevel level) Patient
+            +TreatNext() Patient
+            +ChangeStatus(Patient patient, PatientStatus newStatus) void
+            +SetBillingStrategy(IBillingStrategy strategy) void
+            +BillPatient(Patient patient, decimal baseCharge) decimal
+            +RecordPayment(Patient patient, decimal amount, PaymentMethod method) Payment
+            +TotalOutstanding() decimal
+            +ResetInstance()$ void
+        }
+
+        class PatientRegistry {
+            -Dictionary~int, Patient~ _patients
+            +int Count
+            +Register(Patient patient) void
+            +GetById(int id) Patient
+            +TryGetById(int id, out Patient patient) bool
+            +Update(Patient patient) bool
+            +Remove(int id) bool
+            +GetAll() IReadOnlyCollection~Patient~
+        }
+
+        class AppointmentService {
+            -Dictionary _byDoctor
+            +Schedule(Appointment appointment) void
+            +CancelMostRecent(string doctorName) Appointment
+            +PeekNext(string doctorName) Appointment
+            +CountFor(string doctorName) int
+            -StackFor(string doctorName) Stack~Appointment~
+        }
+    }
+
+    namespace Notifications {
+        class IPatientStatusObserver {
+            <<interface>>
+            +OnStatusChanged(StatusChange change) void
+        }
+
+        class PatientStatusNotifier {
+            -List~IPatientStatusObserver~ _observers
+            -Queue~StatusChange~ _pending
+            +int PendingCount
+            +Subscribe(IPatientStatusObserver observer) void
+            +Unsubscribe(IPatientStatusObserver observer) bool
+            +Notify(StatusChange change) void
+            +QueueChange(StatusChange change) void
+            +DispatchPending() void
+        }
+
+        class ConsoleLogger {
+            -TextWriter _output
+            +OnStatusChanged(StatusChange change) void
+        }
+
+        class SmsNotifier {
+            -TextWriter _output
+            -List~string~ _sent
+            +IReadOnlyList~string~ SentMessages
+            +OnStatusChanged(StatusChange change) void
+        }
+
+        class EmailNotifier {
+            -TextWriter _output
+            -List~string~ _sent
+            +IReadOnlyList~string~ SentMessages
+            +OnStatusChanged(StatusChange change) void
+        }
+
+        class StatusChange {
+            +int PatientId
+            +string PatientName
+            +PatientStatus OldStatus
+            +PatientStatus NewStatus
+            +DateTime OccurredAt
+            +ToString() string
+        }
+    }
+
+    namespace Billing {
+        class IBillingStrategy {
+            <<interface>>
+            +string Name
+            +CalculateBill(decimal baseCharge) decimal
+        }
+
+        class InsuredBilling {
+            +decimal PatientShare$
+            +string Name
+            +CalculateBill(decimal baseCharge) decimal
+        }
+
+        class UninsuredBilling {
+            +string Name
+            +CalculateBill(decimal baseCharge) decimal
+        }
+
+        class GovernmentSubsidyBilling {
+            +decimal PatientShare$
+            +string Name
+            +CalculateBill(decimal baseCharge) decimal
+        }
+    }
+
+    namespace UI {
+        class ConsoleMenu {
+            -HospitalSystem _hospital
+            -TextReader _input
+            -TextWriter _output
+            +Run() void
+        }
+
+        class Program {
+            <<entry point>>
+        }
+    }
+
+    %% ---------- Composition of the singleton facade ----------
+    HospitalSystem "1" *-- "1" PatientRegistry : Registry
+    HospitalSystem "1" *-- "1" TriageQueue : Triage
+    HospitalSystem "1" *-- "1" AppointmentService : Appointments
+    HospitalSystem "1" *-- "1" PatientStatusNotifier : Notifier
+    HospitalSystem "1" o-- "1" IBillingStrategy : BillingStrategy, swappable
+    HospitalSystem ..> MedicalRecord : creates
+    HospitalSystem ..> StatusChange : creates
+    HospitalSystem ..> Payment : issues receipts
+
+    %% ---------- Billing account and receipts ----------
+    Patient "1" *-- "1" PatientAccount : Account
+    PatientAccount "1" *-- "0..*" Payment : receipts issued
+    Payment --> PaymentMethod
+
+    %% ---------- Dictionary: patient registry ----------
+    PatientRegistry "1" o-- "0..*" Patient : dictionary keyed by id
+
+    %% ---------- Stack: appointments per doctor ----------
+    AppointmentService "1" o-- "0..*" Appointment : one stack per doctor
+
+    %% ---------- Priority queue as a sorted linked list ----------
+    TriageQueue "1" *-- "0..*" TriageNode : sorted linked list
+    TriageNode --> TriageNode : Next
+    TriageNode "1" --> "1" Patient : Patient
+
+    %% ---------- Linked list: medical history ----------
+    Patient "1" *-- "1" MedicalHistory : History
+    MedicalHistory "1" *-- "0..*" HistoryNode : linked list
+    HistoryNode --> HistoryNode : Next
+    HistoryNode "1" --> "1" MedicalRecord : Record
+    MedicalHistory ..> MedicalHistoryIterator : creates
+    MedicalHistoryIterator --> HistoryNode : traverses
+
+    %% ---------- Observer ----------
+    IPatientStatusObserver <|.. ConsoleLogger
+    IPatientStatusObserver <|.. SmsNotifier
+    IPatientStatusObserver <|.. EmailNotifier
+    PatientStatusNotifier "1" o-- "0..*" IPatientStatusObserver : observers
+    PatientStatusNotifier "1" *-- "0..*" StatusChange : staged in a FIFO queue
+    StatusChange --> PatientStatus
+
+    %% ---------- Strategy ----------
+    IBillingStrategy <|.. InsuredBilling
+    IBillingStrategy <|.. UninsuredBilling
+    IBillingStrategy <|.. GovernmentSubsidyBilling
+
+    %% ---------- Model associations ----------
+    Patient --> TriageLevel
+    Patient --> PatientStatus
+
+    %% ---------- Console workflow ----------
+    Program ..> ConsoleMenu : starts
+    ConsoleMenu --> HospitalSystem : drives
+    ConsoleMenu ..> MedicalRecord : creates
+    ConsoleMenu ..> IBillingStrategy : selects at runtime

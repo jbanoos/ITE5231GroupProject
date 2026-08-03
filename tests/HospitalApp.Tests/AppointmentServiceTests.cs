@@ -1,3 +1,5 @@
+// PHASE 1
+
 using HospitalApp.Models;
 using HospitalApp.Services;
 
@@ -5,8 +7,10 @@ namespace HospitalApp.Tests;
 
 public class AppointmentServiceTests
 {
+    // A week out at 09:00: always in the future and inside clinic hours, so the
+    // Appointment constructor's date validation accepts it whenever tests run.
     private static Appointment A(string doctor, int patientId) =>
-        new(doctor, patientId, new DateTime(2026, 8, 3, 9, 0, 0), "Check-up");
+        new(doctor, patientId, DateTime.Today.AddDays(7).AddHours(9), "Check-up");
 
     [Fact]
     public void CancelMostRecent_ReturnsAppointmentsInLifoOrder()

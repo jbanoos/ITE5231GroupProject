@@ -1,3 +1,5 @@
+// PHASE 1
+
 using HospitalApp.DataStructures;
 
 namespace HospitalApp.Models;
@@ -19,6 +21,11 @@ public class Patient
 
     public MedicalHistory History { get; }
 
+    // PHASE 2
+    /// <summary>Billing account: outstanding balance and the receipts issued so far.</summary>
+    public PatientAccount Account { get; }
+    // END OF PHASE 2 BLOCK
+
     public Patient(int id, string name, int age, TriageLevel triageLevel)
     {
         if (id <= 0)
@@ -33,6 +40,9 @@ public class Patient
         Age = age;
         TriageLevel = triageLevel;
         History = new MedicalHistory();
+        // PHASE 2
+        Account = new PatientAccount(this);
+        // END OF PHASE 2 BLOCK
     }
 
     public override string ToString() => $"#{Id} {Name} (age {Age}) - {TriageLevel}";
