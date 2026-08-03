@@ -11,6 +11,12 @@ public class Patient
     public string Name { get; set; }
     public int Age { get; set; }
     public TriageLevel TriageLevel { get; set; }
+
+    // PHASE 2
+    /// <summary>Current lifecycle status; changes are broadcast to all registered observers.</summary>
+    public PatientStatus Status { get; set; } = PatientStatus.Registered;
+    // END OF PHASE 2 BLOCK
+
     public MedicalHistory History { get; }
 
     public Patient(int id, string name, int age, TriageLevel triageLevel)

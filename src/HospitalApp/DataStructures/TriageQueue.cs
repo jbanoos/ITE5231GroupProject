@@ -7,6 +7,13 @@ namespace HospitalApp.DataStructures;
 /// Nodes are kept ordered by <see cref="TriageLevel"/> (Critical=1 first);
 /// patients with equal priority are dequeued in FIFO arrival order.
 /// </summary>
+/// <remarks>
+/// Time complexity: Enqueue is O(n) because the list is kept sorted on insert
+/// (worst case: a Standard patient walks the whole list). Dequeue and Peek are
+/// O(1) since the highest-priority patient is always the head. Snapshot is O(n).
+/// Count and IsEmpty are O(1). Keeping the cost on insert is the deliberate
+/// trade-off: it makes the treat-next operation, which runs most often, O(1).
+/// </remarks>
 public class TriageQueue
 {
     private sealed class Node
@@ -23,7 +30,7 @@ public class TriageQueue
     public bool IsEmpty => Count == 0;
 
     /// <summary>
-    /// Inserts the patient so the list stays sorted by priority.
+    /// Inserts the patient so the list stays sorted by priority. O(n).
     /// The new node is placed after all existing nodes of equal priority,
     /// which preserves FIFO order among ties.
     /// </summary>
@@ -53,7 +60,7 @@ public class TriageQueue
         Count++;
     }
 
-    /// <summary>Removes and returns the highest-priority patient.</summary>
+    /// <summary>Removes and returns the highest-priority patient. O(1).</summary>
     public Patient Dequeue()
     {
         if (_head is null)
@@ -65,7 +72,7 @@ public class TriageQueue
         return patient;
     }
 
-    /// <summary>Returns the highest-priority patient without removing them.</summary>
+    /// <summary>Returns the highest-priority patient without removing them. O(1).</summary>
     public Patient Peek()
     {
         if (_head is null)
@@ -73,7 +80,7 @@ public class TriageQueue
         return _head.Patient;
     }
 
-    /// <summary>Returns the patients in the order they would be dequeued.</summary>
+    /// <summary>Returns the patients in the order they would be dequeued. O(n).</summary>
     public IReadOnlyList<Patient> Snapshot()
     {
         var result = new List<Patient>(Count);
