@@ -44,20 +44,20 @@ Work was completed in two phases. Phase 1 built the data-management foundation. 
 ```
 .
 ├── docs/
-│   ├── written-report.pdf          Written report
-│   ├── GitHistory-AgileBoard/      Git history and Agile board evidences
-│   └── uml-class-diagram.png       UML class diagram
+│   ├── written-report.pdf              Written report
+│   ├── GitHistory-AgileBoard/          Git history and Agile board evidences
+│   └── uml-class-diagram.png           UML class diagram
 ├── src/HospitalApp/
-│   ├── Billing/                    Strategy pattern: billing algorithms
+│   ├── Billing/                        Strategy pattern: billing algorithms
 │   │   ├── IBillingStrategy.cs
 │   │   ├── InsuredBilling.cs
 │   │   ├── UninsuredBilling.cs
 │   │   └── GovernmentSubsidyBilling.cs
-│   ├── DataStructures/             Structures written by hand
+│   ├── DataStructures/                 Structures written by hand
 │   │   ├── TriageQueue.cs
 │   │   ├── MedicalHistory.cs
 │   │   └── MedicalHistoryIterator.cs
-│   ├── Models/                     Domain objects and enumerations
+│   ├── Models/                         Domain objects and enumerations
 │   │   ├── Patient.cs
 │   │   ├── MedicalRecord.cs
 │   │   ├── Appointment.cs
@@ -66,21 +66,21 @@ Work was completed in two phases. Phase 1 built the data-management foundation. 
 │   │   ├── PaymentMethod.cs
 │   │   ├── PatientStatus.cs
 │   │   └── TriageLevel.cs
-│   ├── Notifications/              Observer pattern: subject and observers
+│   ├── Notifications/                  Observer pattern: subject and observers
 │   │   ├── IPatientStatusObserver.cs
 │   │   ├── PatientStatusNotifier.cs
 │   │   ├── StatusChange.cs
 │   │   ├── ConsoleLogger.cs
 │   │   ├── SmsNotifier.cs
 │   │   └── EmailNotifier.cs
-│   ├── Services/                   Registry, appointments, singleton facade
+│   ├── Services/                       Registry, appointments, singleton facade
 │   │   ├── PatientRegistry.cs
 │   │   ├── AppointmentService.cs
 │   │   └── HospitalSystem.cs
-│   ├── UI/ConsoleMenu.cs           Menu-driven workflow
-│   ├── Program.cs                  Entry point
+│   ├── UI/ConsoleMenu.cs               Menu-driven workflow
+│   ├── Program.cs                      Entry point
 │   └── HospitalApp.csproj
-└── tests/HospitalApp.Tests/        xUnit test project (60 tests)
+└── tests/HospitalApp.Tests/            Project tests
     ├── PatientRegistryTests.cs
     ├── TriageQueueTests.cs
     ├── AppointmentServiceTests.cs
@@ -172,5 +172,5 @@ Two trade-offs are worth stating:
 
 ## Documentation
 
-- `docs/report.docx` — the written report, covering the design, the justification for each data structure and pattern, complexity analysis, and testing.
-- `docs/uml-class-diagram.png` — UML class diagram of the completed system, generated from `docs/uml-class-diagram.mmd`.
+- `docs/written_report.pdf` — the written report, covering the design, the justification for each data structure and pattern, complexity analysis, and testing.
+- `docs/uml-class-diagram.png` — UML class diagram of the completed system.
