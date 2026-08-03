@@ -42,7 +42,7 @@ Work was completed in two phases. Phase 1 built the data-management foundation. 
 ## Repository structure
 
 ```
-.
+ITE5231GroupProject/
 ├── docs/
 │   ├── written-report.pdf              Written report
 │   ├── GitHistory-AgileBoard/          Git history and Agile board evidences
@@ -53,7 +53,7 @@ Work was completed in two phases. Phase 1 built the data-management foundation. 
 │   │   ├── InsuredBilling.cs
 │   │   ├── UninsuredBilling.cs
 │   │   └── GovernmentSubsidyBilling.cs
-│   ├── DataStructures/                 Structures written by hand
+│   ├── DataStructures/                 Structures
 │   │   ├── TriageQueue.cs
 │   │   ├── MedicalHistory.cs
 │   │   └── MedicalHistoryIterator.cs
