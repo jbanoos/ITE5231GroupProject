@@ -1,3 +1,16 @@
 // PHASE 2
 
-// TODO (Phase 2): Strategy interface for interchangeable billing algorithms - expose a display Name and CalculateBill(baseCharge) so the algorithm can be swapped at runtime without modifying client code.
+namespace HospitalApp.Billing;
+
+/// <summary>
+/// Strategy in the Strategy pattern: an interchangeable billing algorithm,
+/// selectable at runtime without modifying client code.
+/// </summary>
+public interface IBillingStrategy
+{
+    /// <summary>Human-readable name shown in menus and output.</summary>
+    string Name { get; }
+
+    /// <summary>Returns the amount the patient pays for the given base charge.</summary>
+    decimal CalculateBill(decimal baseCharge);
+}
