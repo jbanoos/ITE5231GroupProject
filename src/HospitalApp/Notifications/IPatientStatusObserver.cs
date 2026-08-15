@@ -1,3 +1,12 @@
 // PHASE 2
 
-// TODO (Phase 2): Observer interface - receive patient status changes dispatched by the PatientStatusNotifier.
+namespace HospitalApp.Notifications;
+
+/// <summary>
+/// Observer in the Observer pattern: receives patient status changes
+/// dispatched by the PatientStatusNotifier.
+/// </summary>
+public interface IPatientStatusObserver
+{
+    void OnStatusChanged(StatusChange change);
+}
